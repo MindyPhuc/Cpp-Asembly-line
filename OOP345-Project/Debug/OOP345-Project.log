@@ -1,0 +1,6 @@
+﻿  CustomerOrder.cpp
+  LineManager.cpp
+  Workstation.cpp
+  Generating Code...
+C:\Users\mindy\Google Drive\Seneca\CPD\CPD_F2020\OOP345\OOP-Project\OOP345-Project\OOP345-Project\Workstation.cpp(47): warning C4715: 'Workstation::moveOrder': not all control paths return a value
+  OOP345-Project.vcxproj -> C:\Users\mindy\Google Drive\Seneca\CPD\CPD_F2020\OOP345\OOP-Project\OOP345-Project\Debug\OOP345-Project.exe

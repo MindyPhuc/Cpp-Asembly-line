@@ -1,0 +1,73 @@
+/* ------------------------------------------------------
+Project
+Name		Thi My Phuc Huynh (Mindy)
+ID		149792186
+User		tmphuynh
+-----------------------------------------------------------
+Date		25 Nov 2020
+-----------------------------------------------------------
+Filename	reflect.txt
+-----------------------------------------------------------*/
+In the completion of the project, I have learned:
+
+1. How to set up a project to simulate an assembly line that fills customer orders from inventory, which is a practical application:
+	- We are provided the structure of the project with milestones and each milestone comes with specific modules and their tasks. It is a really important step to set the foundation for the application. Even though we already provided detailed instructions, I found it is challenging to complete the project, especially milestone 3.
+	- It is important to understand clearly the design of the project before starting to code.
+
+2. Milestone 1:
+	- Use <string> library to parse the string (extractToken), which we've done a lot in other workshops. But I took me a little longer to deal with the end of the line when extracting token.
+	- Use class variables, for example, m_delimiter which is a varible used for all object type of Utilities. Accordingly, functions that access this variable have to be class functions:
+		static char m_delimiter;
+		static void setDelimiter(char newDelimiter);
+		static char getDelimiter();
+	- In the Station module, I find it interesting to use the class variable id_generator to generate the m_id:
+		static size_t id_generator;
+		size_t Station::id_generator = 0;
+		m_id = ++Station::id_generator;
+	- The class variable m_widthField in the Station class: at first I updated its value after I extract all the tokens, but the description has a way bigger field width and we don't need it => should update it before extracting and storing the description.
+	- Use <iomanip> : setw, setfill, set alignment to display the data
+
+3. Milestone 2:
+	- Manage the resource through a dynamically allocated array of pointers Item** m_lstItem. We did it once in workshop 4. I had a problem with deallocating the current resource in the move assignment and move constructor. 
+		+ At first I only deallocate the memory of the array without looping it to delete the memory of its element, which cause a problem:
+			for (auto i = 0u; i < m_cntItem; i++) {
+				delete m_lstItem[i];
+			}
+			delete[] m_lstItem;
+		+ I forgot to set m_lstItem = nullptr; and m_cntItem = 0; in the move constructor.
+
+4. Milestone 3:
+	- Honestly, this milestone is the most difficult for me. I had to draw on the paper an assembly line to demonstrate what the function does.
+	- The Workstation module:
+		+ The moveOrder() function is the most challenging for me in this module because I don't know how to move the order to the next station. It took me a while to figure out that I can just simply use the += operator to add the order into the next station.
+			*m_pNextStation += std::move(m_orders.front());
+	- LineManager module:
+		+ The constructor took me the longest. I know how to read from the file, how to extract the token, but don't know how to link all the workstations together. At first I try to use algorithm (find_if) to find the extracted token in the vector<Workstation*> but have a problem to set the next station. Then I use 2 nested for_each to loop through the vector twice and look for the current station and the next station, but I have a problem about type when passing the object to the lambda function. At the end, I decided to simply use 2 nested for loop.
+		for (auto i = 0u; i < stations.size(); i++) {
+			if (stations[i]->getItemName() == currentStationToken) {
+				for (auto j = 0u; j < stations.size(); j++) {
+					if (stations[j]->getItemName() == nextStationToken) {
+						stations[i]->setNextStation(*stations[j]);
+						break;
+					}
+				}
+				
+			}
+		}
+		+ I didn't know how to identify the first station, I know that the last station has m_pnextStation as nullptr, but have no idea how to check for the first station. With the help of Professor adding the Workstation* m_firstStation = nullptr; in the LineManager class. The first station is the first one read from the first line of the file and at this time, this variable is still a nullptr, therefore, we can check and assign the first station.
+
+			if (m_firstStation == nullptr) {
+					m_firstStation = stations[i];
+			}
+		+ Use STL containers: vector, deque with methods: pop_front(), front(), back(), push_back(), size(), empty(), begin(), end()
+		+ displayStationsSorted(): this function become easy when I figure how to identify the first station in the Assembly line
+			
+			const  Workstation* station = m_firstStation;
+			// display from the first station until the last station (which has the nextStation is nullptr)
+			while (station != nullptr) {
+				station->display(std::cout);
+				station = station->getNextStation();
+			}
+5. In conclusion:
+	- The project design is really important. We need to clearly understand it before starting to code.
+	- There are many ways to complete a task but it is better to go with the simpler one.
